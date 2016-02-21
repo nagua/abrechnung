@@ -1,5 +1,9 @@
 FROM python:3-alpine
 
+RUN apk --update upgrade && \
+    apk add ca-certificates && \
+    rm -rf /var/cache/apk/*
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
