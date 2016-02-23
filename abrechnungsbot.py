@@ -1,10 +1,10 @@
 from telegram import Updater
-import json, time
+import yaml, time
 
 print("Initialisiere TelegramBot!")
 
-with open("config.json") as data_file:
-    config = json.load(data_file)
+with open("config.yaml") as data_file:
+    config = yaml.load(data_file)
 
 updater = Updater(token=config["token"])
 dispatcher = updater.dispatcher
