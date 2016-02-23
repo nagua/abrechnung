@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
 
-CMD [ "python", "./abrechnungsbot.py" ]
+CMD [ "python", "./abrechnung/abrechnungsbot.py" ]
