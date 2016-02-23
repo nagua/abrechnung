@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 RUN apk --update upgrade && \
-    apk add ca-certificates && \
+    apk add ca-certificates py-yaml && \
     rm -rf /var/cache/apk/*
 
 RUN mkdir -p /usr/src/app

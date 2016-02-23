@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 import time, random, copy
 
@@ -72,10 +73,11 @@ def gen_test_group():
 
 
 class Group:
-  accounts = []
-  events = []
-  group_id = 0
-
+  """
+  This class represents a group that shares money.
+  And has events to where money was spend and
+  distributes the cost to the participants.
+  """
   def __init__(self):
     self.accounts = []
     self.events = []
@@ -126,8 +128,8 @@ class Group:
           acc.balance -= remainder
         
   def __repr__(self):
-  	"""Print all account details of this group"""
-  	ret = ""
+    """Print all account details of this group"""
+    ret = ""
     account_data = "[print_account_data] - Name: {name} \t| Balance: {balance} \n"
     ret += "[print_account_data] - Account details: \n"
     for acc in self.accounts:
@@ -190,21 +192,14 @@ class Group:
 
 class Account:
   """Class that represents the account of a person"""
-  
-  balance = 0
-  name = ""
-  account_id = 0
 
   def __init__(self, name, account_id):
     self.name = name
+    self.balance = 0
     self.account_id = account_id
 
 class Event:
   """Class that represents an event"""
-  
-  cost_in_cent = 0
-  payer = ""
-  participants = []
 
   def __init__(self, cost_in_euro, payer, participants):
     self.cost_in_cents = int(cost_in_euro * 100)
@@ -215,3 +210,7 @@ class Event:
   def cost_per_person(self):
     """Calculate cost per person"""
     return self.cost_in_cents / len(self.participants)
+
+if __name__ == "__main__":
+  gen_test_group()
+  
