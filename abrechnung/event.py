@@ -1,3 +1,5 @@
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
+
 import time
 
 class Event:
@@ -12,3 +14,7 @@ class Event:
   def cost_per_person(self):
     """Calculate cost per person"""
     return self.cost_in_cents / len(self.participants)
+
+  def __repr__(self):
+  	event_text = "[add_event] - cost: {cost}, payer: {payer}, participants: {participants}"
+  	return event_text.format(**{'cost': self.cost_in_cents, 'payer': self.payer, 'participants': self.participants})

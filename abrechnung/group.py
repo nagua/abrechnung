@@ -1,4 +1,6 @@
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 import random, copy, time
+import transaction as trans
 
 class Group:
   """
@@ -23,9 +25,9 @@ class Group:
     remainder = event.cost_in_cents % len(event.participants)
     cost_per_person = ( event.cost_in_cents - remainder) / len(event.participants)
     
-    event_text = "[add_event] - cost: {cost}, payer: {payer}, participants: {participants}"
+    
     add_event_text = "[add_event] - cost_per_person: {cost_per_person}, remainder: {remainder}"
-    print(event_text.format(**{'cost': event.cost_in_cents, 'payer': event.payer, 'participants': event.participants}))
+    print(event)
     print(add_event_text.format(**{'cost_per_person': cost_per_person, 'remainder': remainder}))
 
     
@@ -58,10 +60,9 @@ class Group:
   def __repr__(self):
     """Print all account details of this group"""
     ret = ""
-    account_data = "[print_account_data] - Name: {name} \t| Balance: {balance} \n"
     ret += "[print_account_data] - Account details: \n"
     for acc in self.accounts:
-      ret += account_data.format(**{'name': acc.name, 'balance': acc.balance})
+      ret += str(acc)
     return ret
 
   def print_account_data(self):
@@ -88,7 +89,8 @@ class Group:
       else:
         positive_accounts.append(copy.copy(acc))
 
-    transfer_text = "[calculate_balancing] - Transfer: {amount} from: {from} to: {to}"
+    
+    transaction_list = []
     
     # For every negative account find a positive one to that the tansaction has to go to.
     for neg in negative_accounts:
@@ -99,14 +101,19 @@ class Group:
         if pos.balance != 0:
           if pos.balance >= -neg.balance:
             #There is enough credit on the pos so neg has to transfer all to him
-            print(transfer_text.format(**{'amount': -neg.balance, 'from': neg.name, 'to': pos.name}))
+            transaction_list.append(trans.Transaction(-neg.balance, neg.name, pos.name))
             pos.balance += neg.balance
             neg.balance = 0
           else:
             #There is not enough credit on pos so neg has to transfer a part to him
-            print(transfer_text.format(**{'amount': pos.balance, 'from': neg.name, 'to': pos.name}))
+            transaction_list.append(trans.Transaction(pos.balance, neg.name, pos.name))
             neg.balance += pos.balance
             pos.balance = 0
+
+    for item in transaction_list:
+      print(item)
+
+    return transaction_list
 
   def do_balancing(self):
     """Calculate the transactions and reset the account balance"""
