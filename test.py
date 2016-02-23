@@ -77,9 +77,9 @@ class Group:
   group_id = 0
 
   def __init__(self):
-    accounts = []
-    events = []
-    group_id = 0
+    self.accounts = []
+    self.events = []
+    self.group_id = 0
 
   def add_account(self, account):
     """Add an account to the group"""
@@ -125,12 +125,17 @@ class Group:
         if rand_person == acc.name:
           acc.balance -= remainder
         
-  def print_account_data(self):
-    """Print all account details of this group"""
-    account_data = "[print_account_data] - Name: {name} \t| Balance: {balance}"
-    print("[print_account_data] - Account details: ")
+  def __repr__(self):
+  	"""Print all account details of this group"""
+  	ret = ""
+    account_data = "[print_account_data] - Name: {name} \t| Balance: {balance} \n"
+    ret += "[print_account_data] - Account details: \n"
     for acc in self.accounts:
-      print(account_data.format(**{'name': acc.name, 'balance': acc.balance}))
+      ret += account_data.format(**{'name': acc.name, 'balance': acc.balance})
+    return ret
+
+  def print_account_data(self):
+  	print(str(self))
 
   def check_balance(self):
     """Check if all accounts adds up to zero"""
