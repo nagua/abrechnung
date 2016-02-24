@@ -1,2 +1,3 @@
 ---
 token: <telegram-api-token>
+private_chat: <private-chat-id>

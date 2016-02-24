@@ -14,6 +14,8 @@ if os.path.isfile('import.yml'):
 else:
   groups = {}
 
+private_chat = 0
+
 def start(bot, update):
   group_id = update.message.chat_id
 
@@ -88,12 +90,23 @@ def do_balancing(bot, update):
   bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
 def export(bot, update):
+  group_id = update.message.chat_id
+
+  if group_id != private_chat:
+    return
+
   text = yaml.dump(groups)
   with open('export.yml', 'w') as f:
     f.write(text)
   bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
 def import_from_file(bot, update):
+  global groups
+  group_id = update.message.chat_id
+
+  if group_id != private_chat:
+    return
+
   with open('import.yml') as f:
     obj = yaml.load(f)
 
@@ -107,6 +120,7 @@ def unknown(bot, update):
   bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
 
 def main():
+  global private_chat
   logging.basicConfig(format='%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
   logging.getLogger().setLevel(logging.INFO)
   logger = logging.getLogger('main')
@@ -116,6 +130,8 @@ def main():
   # Load configuration
   with open("config.yml") as data_file:
     config = yaml.load(data_file)
+
+  private_chat = int(config["private_chat"])
 
   updater = Updater(token=config["token"])
   dispatcher = updater.dispatcher
