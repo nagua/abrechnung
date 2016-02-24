@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
+import os.path
 import logging, yaml, time
 from telegram import Updater
 
@@ -7,7 +8,11 @@ import group as g
 import account as a
 import event as e
 
-groups = {}
+if os.path.isfile('import.yml'):
+  with open('import.yml') as f:
+    groups = yaml.load(f)
+else:
+  groups = {}
 
 def start(bot, update):
   group_id = update.message.chat_id
@@ -54,7 +59,7 @@ def show_account_data(bot, update):
   
   text = ""
   for acc in groups[group_id].accounts:
-    text = str(acc)
+    text += str(acc)
 
   bot.sendMessage(chat_id=group_id, text=text)
 
@@ -84,7 +89,9 @@ def do_balancing(bot, update):
 
 def export(bot, update):
   text = yaml.dump(groups)
-  bot.sendMessage(chat_id=update.message.chat_id, text=text)  
+  with open('export.yml', 'w') as f:
+    f.write(text)
+  bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
 def import_from_file(bot, update):
   with open('import.yml') as f:
@@ -130,3 +137,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
