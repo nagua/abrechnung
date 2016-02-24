@@ -6,7 +6,7 @@ class Event:
   """Class that represents an event"""
 
   def __init__(self, cost_in_euro, payer, participants):
-    self.cost_in_cents = int(cost_in_euro * 100)
+    self.cost_in_cents = int(cost_in_euro) * 100
     self.payer = payer
     self.participants = participants
     self.date = time.localtime()

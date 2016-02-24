@@ -11,7 +11,7 @@ def gen_test_group():
   This is the test function you want to execute!!!!
   -----------------------------------------------------------------------------------------
   """
-  group = g.Group()
+  group = g.Group(0)
   
   # Add accounts
   group.add_account(a.Account("nicolas"))

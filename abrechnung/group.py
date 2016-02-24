@@ -8,10 +8,10 @@ class Group:
   And has events to where money was spend and
   distributes the cost to the participants.
   """
-  def __init__(self):
+  def __init__(self, group_id):
     self.accounts = []
     self.events = []
-    self.group_id = 0
+    self.group_id = group_id
 
   def add_account(self, account):
     """Add an account to the group"""
@@ -117,9 +117,11 @@ class Group:
 
   def do_balancing(self):
     """Calculate the transactions and reset the account balance"""
-    self.calculate_balancing()
+    ret = self.calculate_balancing()
 
     # Poor mans balancing ;)
     # The transactions have to be done from the actual humans
     for acc in self.accounts:
       acc.balance = 0
+
+    return ret
