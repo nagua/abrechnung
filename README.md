@@ -47,9 +47,9 @@ Here are all commands listed.
 
 ## Telegram BotFather info
 
-   start - start - Create or recreate group
-   add_account - add_account [name] - Create new account for name
-   add_event - add_event [amount] [payer] [rest participants] - This will add a new event and debit the accounts
-   show_account_data - show_account_data - This will print the current account data
-   calculate_balancing - calculate_balancing - This will calculate the resulting transactions
-   do_balancing - do_balancing - This will calculate the transactions and reset the balances
+    start - start - Create or recreate group
+    add_account - add_account [name] - Create new account for name
+    add_event - add_event [amount] [payer] [rest participants] - This will add a new event and debit the accounts
+    show_account_data - show_account_data - This will print the current account data
+    calculate_balancing - calculate_balancing - This will calculate the resulting transactions
+    do_balancing - do_balancing - This will calculate the transactions and reset the balances
