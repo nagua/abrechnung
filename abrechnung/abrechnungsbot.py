@@ -78,7 +78,7 @@ class AbrechnungsBot:
     
     text = ""
     for acc in self.groups[group_id].accounts:
-      text += str(acc)
+      text += str(acc) + '\n'
 
     bot.sendMessage(chat_id=group_id, text=text)
 
