@@ -11,6 +11,8 @@ import event as e
 class AbrechnungsBot:
   def __init__(self, config, import_file="import.yml"):
     self.private_chat = int(config["private_chat"])
+    self.token        = config["token"]
+
     try:
       with open(import_file) as f:
         self.groups = yaml.load(f)
@@ -129,10 +131,11 @@ def main():
   with open("config.yml") as data_file:
     config = yaml.load(data_file)
 
-  updater = Updater(token=config["token"])
+  bot = AbrechnungsBot(config)
+
+  updater = Updater(token=bot.token)
   dispatcher = updater.dispatcher
 
-  bot = AbrechnungsBot(config)
   dispatcher.addTelegramCommandHandler('start', bot.start)
   dispatcher.addTelegramCommandHandler('add_account', bot.add_account)
   dispatcher.addTelegramCommandHandler('show_account_data', bot.show_account_data)
