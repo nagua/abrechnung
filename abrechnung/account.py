@@ -14,5 +14,5 @@ class Account:
     self.balance = 0
 
   def __repr__(self):
-    account_data = "[account_data] - Name: {name} \t\t| Balance: {balance} \n"
+    account_data = "[account_data] - Name: {name} \t\t| Balance: {balance}"
     return account_data.format(**{'name': self.name, 'balance': self.balance / 100})

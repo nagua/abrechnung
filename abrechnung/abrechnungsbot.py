@@ -90,7 +90,7 @@ class AbrechnungsBot:
     transactions = gr.calculate_balancing()
 
     for trans in transactions:
-      text += str(trans)
+      text += str(trans) + '\n'
 
     bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
@@ -102,7 +102,7 @@ class AbrechnungsBot:
     transactions = gr.do_balancing()
 
     for trans in transactions:
-      text += str(trans)
+      text += str(trans) + '\n'
 
     bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
