@@ -9,15 +9,11 @@ import account as a
 import event as e
 
 class AbrechnungsBot:
-  def __init__(self, config, import_file="import.yml"):
+  def __init__(self, config, groups):
     self.private_chat = int(config["private_chat"])
     self.token        = config["token"]
+    self.groups       = groups
 
-    try:
-      with open(import_file) as f:
-        self.groups = yaml.load(f)
-    except OSError as e:
-      self.groups = {}
 
   def connect_and_run(self):
     updater = Updater(token=self.token)
@@ -149,9 +145,14 @@ def main():
   with open("config.yml") as data_file:
     config = yaml.load(data_file)
 
-  bot = AbrechnungsBot(config)
-  bot.connect_and_run()
+  try:
+    with open(import_file) as f:
+      groups = yaml.load(f)
+  except OSError as e:
+    groups = {}
 
+  bot = AbrechnungsBot(config, groups)
+  bot.connect_and_run()
   
   logger.info("Bot initialisiert")
 
