@@ -8,14 +8,15 @@ import group as g
 import account as a
 import event as e
 
-if os.path.isfile('import.yml'):
-  with open('import.yml') as f:
-    groups = yaml.load(f)
-else:
-  groups = {}
-
 private_chat = 0
 class AbrechnungsBot:
+  def __init__(self):
+    if os.path.isfile('import.yml'):
+      with open('import.yml') as f:
+        groups = yaml.load(f)
+    else:
+      groups = {}
+
   def start(self, bot, update):
     group_id = update.message.chat_id
 
