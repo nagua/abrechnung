@@ -13,9 +13,9 @@ class AbrechnungsBot:
   def __init__(self, import_file="import.yml"):
     try:
       with open(import_file) as f:
-        groups = yaml.load(f)
+        self.groups = yaml.load(f)
     except OSError as e:
-      groups = {}
+      self.groups = {}
 
   def start(self, bot, update):
     group_id = update.message.chat_id
@@ -23,12 +23,12 @@ class AbrechnungsBot:
     found = False
 
     try:
-      groups[group_id]
+      self.groups[group_id]
       found = True
     except KeyError:
       bot.sendMessage(chat_id=update.message.chat_id, text="Added new group")
 
-    groups[group_id] = g.Group(group_id)
+    self.groups[group_id] = g.Group(group_id)
 
     if found:
       bot.sendMessage(chat_id=update.message.chat_id, text="Recreated group")
@@ -39,7 +39,7 @@ class AbrechnungsBot:
     if len(args) != 1:
       return
 
-    groups[group_id].add_account(a.Account(args[0]))
+    self.groups[group_id].add_account(a.Account(args[0]))
 
   def add_event(self, bot, update, args):
     group_id = update.message.chat_id
@@ -52,7 +52,7 @@ class AbrechnungsBot:
     payer = args[1]
     participants = args[1:]
 
-    groups[group_id].add_event(e.Event(amount, payer, participants))
+    self.groups[group_id].add_event(e.Event(amount, payer, participants))
 
     bot.sendMessage(chat_id=group_id, text="Event was added")
 
@@ -61,14 +61,14 @@ class AbrechnungsBot:
     group_id = update.message.chat_id
     
     text = ""
-    for acc in groups[group_id].accounts:
+    for acc in self.groups[group_id].accounts:
       text += str(acc)
 
     bot.sendMessage(chat_id=group_id, text=text)
 
   def calculate_balancing(self, bot, update):
     group_id = update.message.chat_id
-    gr = groups[group_id]
+    gr = self.groups[group_id]
 
     text = ""
     transactions = gr.calculate_balancing()
@@ -80,7 +80,7 @@ class AbrechnungsBot:
 
   def do_balancing(self, bot, update):
     group_id = update.message.chat_id
-    gr = groups[group_id]
+    gr = self.groups[group_id]
 
     text = "All account balances were set back to zero\n"
     transactions = gr.do_balancing()
@@ -96,13 +96,12 @@ class AbrechnungsBot:
     if group_id != private_chat:
       return
 
-    text = yaml.dump(groups)
+    text = yaml.dump(self.groups)
     with open('export.yml', 'w') as f:
       f.write(text)
     bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
   def import_from_file(self, bot, update):
-    global groups
     group_id = update.message.chat_id
 
     if group_id != private_chat:
@@ -111,8 +110,7 @@ class AbrechnungsBot:
     with open('import.yml') as f:
       obj = yaml.load(f)
 
-    #Not working, don't know why...
-    groups = obj
+    self.groups = obj
 
   def easter(self, bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text="This is a easter egg!")
