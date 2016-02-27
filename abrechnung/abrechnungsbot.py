@@ -11,10 +11,10 @@ import event as e
 private_chat = 0
 class AbrechnungsBot:
   def __init__(self, import_file="import.yml"):
-    if os.path.isfile(import_file):
+    try:
       with open(import_file) as f:
         groups = yaml.load(f)
-    else:
+    except OSError as e:
       groups = {}
 
   def start(self, bot, update):
