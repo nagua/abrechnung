@@ -8,119 +8,133 @@ import group as g
 import account as a
 import event as e
 
-if os.path.isfile('import.yml'):
-  with open('import.yml') as f:
-    groups = yaml.load(f)
-else:
-  groups = {}
-
-private_chat = 0
-
-def start(bot, update):
-  group_id = update.message.chat_id
-
-  found = False
-
-  try:
-    groups[group_id]
-    found = True
-  except KeyError:
-    bot.sendMessage(chat_id=update.message.chat_id, text="Added new group")
-
-  groups[group_id] = g.Group(group_id)
-
-  if found:
-    bot.sendMessage(chat_id=update.message.chat_id, text="Recreated group")
-
-def add_account(bot, update, args):
-  group_id = update.message.chat_id
-
-  if len(args) != 1:
-    return
-
-  groups[group_id].add_account(a.Account(args[0]))
-
-def add_event(bot, update, args):
-  group_id = update.message.chat_id
-  logger = logging.getLogger('add_event')
-
-  if len(args) < 2:
-    return 
-
-  amount = args[0]
-  payer = args[1]
-  participants = args[1:]
-
-  groups[group_id].add_event(e.Event(amount, payer, participants))
-
-  bot.sendMessage(chat_id=group_id, text="Event was added")
+class AbrechnungsBot:
+  def __init__(self, config, groups):
+    self.private_chat = int(config["private_chat"])
+    self.token        = config["token"]
+    self.groups       = groups
 
 
-def show_account_data(bot, update):
-  group_id = update.message.chat_id
-  
-  text = ""
-  for acc in groups[group_id].accounts:
-    text += str(acc)
+  def connect_and_run(self):
+    updater = Updater(token=self.token)
+    dispatcher = updater.dispatcher
 
-  bot.sendMessage(chat_id=group_id, text=text)
+    dispatcher.addTelegramCommandHandler('start', self.start)
+    dispatcher.addTelegramCommandHandler('add_account', self.add_account)
+    dispatcher.addTelegramCommandHandler('show_account_data', self.show_account_data)
+    dispatcher.addTelegramCommandHandler('calculate_balancing', self.calculate_balancing)
+    dispatcher.addTelegramCommandHandler('do_balancing', self.do_balancing)
+    dispatcher.addTelegramCommandHandler('export', self.export)
+    dispatcher.addTelegramCommandHandler('import_from_file', self.import_from_file)
+    dispatcher.addTelegramCommandHandler('easter', self.easter)
+    dispatcher.addTelegramCommandHandler('add_event', self.add_event)
+    dispatcher.addUnknownTelegramCommandHandler(self.unknown)
+    
+    updater.start_polling()
+    
 
-def calculate_balancing(bot, update):
-  group_id = update.message.chat_id
-  gr = groups[group_id]
+  def start(self, bot, update):
+    group_id = update.message.chat_id
 
-  text = ""
-  transactions = gr.calculate_balancing()
+    found = False
 
-  for trans in transactions:
-    text += str(trans)
+    try:
+      self.groups[group_id]
+      found = True
+    except KeyError:
+      bot.sendMessage(chat_id=update.message.chat_id, text="Added new group")
 
-  bot.sendMessage(chat_id=update.message.chat_id, text=text)
+    self.groups[group_id] = g.Group(group_id)
 
-def do_balancing(bot, update):
-  group_id = update.message.chat_id
-  gr = groups[group_id]
+    if found:
+      bot.sendMessage(chat_id=update.message.chat_id, text="Recreated group")
 
-  text = "All account balances were set back to zero\n"
-  transactions = gr.do_balancing()
+  def add_account(self, bot, update, args):
+    group_id = update.message.chat_id
 
-  for trans in transactions:
-    text += str(trans)
+    if len(args) != 1:
+      return
 
-  bot.sendMessage(chat_id=update.message.chat_id, text=text)
+    self.groups[group_id].add_account(a.Account(args[0]))
 
-def export(bot, update):
-  group_id = update.message.chat_id
+  def add_event(self, bot, update, args):
+    group_id = update.message.chat_id
+    logger = logging.getLogger('add_event')
 
-  if group_id != private_chat:
-    return
+    if len(args) < 2:
+      return 
 
-  text = yaml.dump(groups)
-  with open('export.yml', 'w') as f:
-    f.write(text)
-  bot.sendMessage(chat_id=update.message.chat_id, text=text)
+    amount = args[0]
+    payer = args[1]
+    participants = args[1:]
 
-def import_from_file(bot, update):
-  global groups
-  group_id = update.message.chat_id
+    self.groups[group_id].add_event(e.Event(amount, payer, participants))
 
-  if group_id != private_chat:
-    return
+    bot.sendMessage(chat_id=group_id, text="Event was added")
 
-  with open('import.yml') as f:
-    obj = yaml.load(f)
 
-  #Not working, don't know why...
-  groups = obj
+  def show_account_data(self, bot, update):
+    group_id = update.message.chat_id
+    
+    text = ""
+    for acc in self.groups[group_id].accounts:
+      text += str(acc)
 
-def easter(bot, update):
-  bot.sendMessage(chat_id=update.message.chat_id, text="This is a easter egg!")
+    bot.sendMessage(chat_id=group_id, text=text)
 
-def unknown(bot, update):
-  bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
+  def calculate_balancing(self, bot, update):
+    group_id = update.message.chat_id
+    gr = self.groups[group_id]
+
+    text = ""
+    transactions = gr.calculate_balancing()
+
+    for trans in transactions:
+      text += str(trans)
+
+    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+
+  def do_balancing(self, bot, update):
+    group_id = update.message.chat_id
+    gr = self.groups[group_id]
+
+    text = "All account balances were set back to zero\n"
+    transactions = gr.do_balancing()
+
+    for trans in transactions:
+      text += str(trans)
+
+    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+
+  def export(self, bot, update):
+    group_id = update.message.chat_id
+
+    if group_id != self.private_chat:
+      return
+
+    text = yaml.dump(self.groups)
+    with open('export.yml', 'w') as f:
+      f.write(text)
+    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+
+  def import_from_file(self, bot, update):
+    group_id = update.message.chat_id
+
+    if group_id != self.private_chat:
+      return
+
+    with open('import.yml') as f:
+      obj = yaml.load(f)
+
+    self.groups = obj
+
+  def easter(self, bot, update):
+    bot.sendMessage(chat_id=update.message.chat_id, text="This is a easter egg!")
+
+  def unknown(self, bot, update):
+    bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
 
 def main():
-  global private_chat
   logging.basicConfig(format='%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
   logging.getLogger().setLevel(logging.INFO)
   logger = logging.getLogger('main')
@@ -131,23 +145,14 @@ def main():
   with open("config.yml") as data_file:
     config = yaml.load(data_file)
 
-  private_chat = int(config["private_chat"])
+  try:
+    with open("import.yml") as f:
+      groups = yaml.load(f)
+  except OSError as e:
+    groups = {}
 
-  updater = Updater(token=config["token"])
-  dispatcher = updater.dispatcher
-
-  dispatcher.addTelegramCommandHandler('start', start)
-  dispatcher.addTelegramCommandHandler('add_account', add_account)
-  dispatcher.addTelegramCommandHandler('show_account_data', show_account_data)
-  dispatcher.addTelegramCommandHandler('calculate_balancing', calculate_balancing)
-  dispatcher.addTelegramCommandHandler('do_balancing', do_balancing)
-  dispatcher.addTelegramCommandHandler('export', export)
-  dispatcher.addTelegramCommandHandler('import_from_file', import_from_file)
-  dispatcher.addTelegramCommandHandler('easter', easter)
-  dispatcher.addTelegramCommandHandler('add_event', add_event)
-  dispatcher.addUnknownTelegramCommandHandler(unknown)
-  
-  updater.start_polling()
+  bot = AbrechnungsBot(config, groups)
+  bot.connect_and_run()
   
   logger.info("Bot initialisiert")
 
