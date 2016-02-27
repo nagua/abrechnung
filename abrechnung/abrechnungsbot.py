@@ -146,7 +146,7 @@ def main():
     config = yaml.load(data_file)
 
   try:
-    with open(import_file) as f:
+    with open("import.yml") as f:
       groups = yaml.load(f)
   except OSError as e:
     groups = {}
