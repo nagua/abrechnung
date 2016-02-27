@@ -8,9 +8,9 @@ import group as g
 import account as a
 import event as e
 
-private_chat = 0
 class AbrechnungsBot:
-  def __init__(self, import_file="import.yml"):
+  def __init__(self, private_chat, import_file="import.yml"):
+    self.private_chat = private_chat
     try:
       with open(import_file) as f:
         self.groups = yaml.load(f)
@@ -93,7 +93,7 @@ class AbrechnungsBot:
   def export(self, bot, update):
     group_id = update.message.chat_id
 
-    if group_id != private_chat:
+    if group_id != self.private_chat:
       return
 
     text = yaml.dump(self.groups)
@@ -104,7 +104,7 @@ class AbrechnungsBot:
   def import_from_file(self, bot, update):
     group_id = update.message.chat_id
 
-    if group_id != private_chat:
+    if group_id != self.private_chat:
       return
 
     with open('import.yml') as f:
@@ -119,7 +119,6 @@ class AbrechnungsBot:
     bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
 
 def main():
-  global private_chat
   logging.basicConfig(format='%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
   logging.getLogger().setLevel(logging.INFO)
   logger = logging.getLogger('main')
@@ -135,7 +134,7 @@ def main():
   updater = Updater(token=config["token"])
   dispatcher = updater.dispatcher
 
-  bot = AbrechnungsBot()
+  bot = AbrechnungsBot(private_chat)
   dispatcher.addTelegramCommandHandler('start', bot.start)
   dispatcher.addTelegramCommandHandler('add_account', bot.add_account)
   dispatcher.addTelegramCommandHandler('show_account_data', bot.show_account_data)
