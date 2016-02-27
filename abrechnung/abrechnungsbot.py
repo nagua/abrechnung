@@ -10,9 +10,9 @@ import event as e
 
 private_chat = 0
 class AbrechnungsBot:
-  def __init__(self):
-    if os.path.isfile('import.yml'):
-      with open('import.yml') as f:
+  def __init__(self, import_file="import.yml"):
+    if os.path.isfile(import_file):
+      with open(import_file) as f:
         groups = yaml.load(f)
     else:
       groups = {}
