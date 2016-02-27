@@ -19,6 +19,24 @@ class AbrechnungsBot:
     except OSError as e:
       self.groups = {}
 
+  def connect_and_run(self):
+    updater = Updater(token=self.token)
+    dispatcher = updater.dispatcher
+
+    dispatcher.addTelegramCommandHandler('start', self.start)
+    dispatcher.addTelegramCommandHandler('add_account', self.add_account)
+    dispatcher.addTelegramCommandHandler('show_account_data', self.show_account_data)
+    dispatcher.addTelegramCommandHandler('calculate_balancing', self.calculate_balancing)
+    dispatcher.addTelegramCommandHandler('do_balancing', self.do_balancing)
+    dispatcher.addTelegramCommandHandler('export', self.export)
+    dispatcher.addTelegramCommandHandler('import_from_file', self.import_from_file)
+    dispatcher.addTelegramCommandHandler('easter', self.easter)
+    dispatcher.addTelegramCommandHandler('add_event', self.add_event)
+    dispatcher.addUnknownTelegramCommandHandler(self.unknown)
+    
+    updater.start_polling()
+    
+
   def start(self, bot, update):
     group_id = update.message.chat_id
 
@@ -132,22 +150,8 @@ def main():
     config = yaml.load(data_file)
 
   bot = AbrechnungsBot(config)
+  bot.connect_and_run()
 
-  updater = Updater(token=bot.token)
-  dispatcher = updater.dispatcher
-
-  dispatcher.addTelegramCommandHandler('start', bot.start)
-  dispatcher.addTelegramCommandHandler('add_account', bot.add_account)
-  dispatcher.addTelegramCommandHandler('show_account_data', bot.show_account_data)
-  dispatcher.addTelegramCommandHandler('calculate_balancing', bot.calculate_balancing)
-  dispatcher.addTelegramCommandHandler('do_balancing', bot.do_balancing)
-  dispatcher.addTelegramCommandHandler('export', bot.export)
-  dispatcher.addTelegramCommandHandler('import_from_file', bot.import_from_file)
-  dispatcher.addTelegramCommandHandler('easter', bot.easter)
-  dispatcher.addTelegramCommandHandler('add_event', bot.add_event)
-  dispatcher.addUnknownTelegramCommandHandler(bot.unknown)
-  
-  updater.start_polling()
   
   logger.info("Bot initialisiert")
 
