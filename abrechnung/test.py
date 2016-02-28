@@ -9,7 +9,8 @@ import group as g
 def gen_test_group():
   """ some function for backwards compatibility """
   t = TestAccounting()
-  t.run()
+  t.setUp()
+  t.test_group_balancing()
   return t.group
 
 class TestAccounting(unittest.TestCase):
