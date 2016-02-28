@@ -34,32 +34,21 @@ class TestAccounting(unittest.TestCase):
     --------------------------------------------------------------------------
     """
     group = self.group
+    
+    events = [
+      e.Event(30, "max", ["nicolas", "max", "sandrina"]),
+      e.Event(20, "max", ["nicolas", "max", "sandrina"]),
+      e.Event(50, "max", ["nicolas", "max", "sandrina", "annika"]),
+      e.Event(30, "nicolas", ["nicolas", "max", "annika"]),
+      e.Event(60.50, "nicolas", ["nicolas", "max", "sandrina"]),
+    ]
 
     # Add events
-    group.add_event(e.Event(30, "max", ["nicolas", "max", "sandrina"]))
-    group.print_account_data()
-    self.assertTrue(group.check_balance())
-    print()
-
-    group.add_event(e.Event(20, "max", ["nicolas", "max", "sandrina"]))
-    group.print_account_data()
-    self.assertTrue(group.check_balance())
-    print()
-
-    group.add_event(e.Event(50, "max", ["nicolas", "max", "sandrina", "annika"]))
-    group.print_account_data()
-    self.assertTrue(group.check_balance())
-    print()
-
-    group.add_event(e.Event(30, "nicolas", ["nicolas", "max", "annika"]))
-    group.print_account_data()
-    self.assertTrue(group.check_balance())
-    print()
-
-    group.add_event(e.Event(60.50, "nicolas", ["nicolas", "max", "sandrina"]))
-    group.print_account_data()
-    self.assertTrue(group.check_balance())
-    print()
+    for event in events:
+      group.add_event(event)
+      group.print_account_data()
+      self.assertTrue(group.check_balance())
+      print()
 
     # Calculate transactions needed to balance accounts
     group.calculate_balancing()
