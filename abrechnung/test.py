@@ -7,7 +7,7 @@ import account as a
 import group as g
 
 def gen_test_group():
-  """ some function for backwards compatibility """
+  """ some function for backwards compatibility (used in ipynb file)"""
   t = TestAccounting()
   t.setUp()
   t.test_group_balancing()
@@ -15,9 +15,15 @@ def gen_test_group():
 
 class TestAccounting(unittest.TestCase):
   def tearDown(self):
+    """
+    This is run after each and every test_* function
+    """
     pass
 
   def setUp(self):
+    """
+    This is run before each and every test_* function
+    """
     self.group = g.Group(0)
     
     # Add accounts
