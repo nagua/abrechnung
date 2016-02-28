@@ -29,27 +29,27 @@ class TestAccounting(unittest.TestCase):
     # Add events
     group.add_event(e.Event(30, "max", ["nicolas", "max", "sandrina"]))
     group.print_account_data()
-    group.check_balance()
+    self.assertTrue(group.check_balance())
     print()
 
     group.add_event(e.Event(20, "max", ["nicolas", "max", "sandrina"]))
     group.print_account_data()
-    group.check_balance()
+    self.assertTrue(group.check_balance())
     print()
 
     group.add_event(e.Event(50, "max", ["nicolas", "max", "sandrina", "annika"]))
     group.print_account_data()
-    group.check_balance()
+    self.assertTrue(group.check_balance())
     print()
 
     group.add_event(e.Event(30, "nicolas", ["nicolas", "max", "annika"]))
     group.print_account_data()
-    group.check_balance()
+    self.assertTrue(group.check_balance())
     print()
 
     group.add_event(e.Event(60.50, "nicolas", ["nicolas", "max", "sandrina"]))
     group.print_account_data()
-    group.check_balance()
+    self.assertTrue(group.check_balance())
     print()
 
     # Calculate transactions needed to balance accounts
