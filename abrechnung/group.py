@@ -62,7 +62,7 @@ class Group:
     ret = ""
     ret += "[print_account_data] - Account details: \n"
     for acc in self.accounts:
-      ret += str(acc)
+      ret += str(acc) + "\n"
     return ret
 
   def print_account_data(self):
