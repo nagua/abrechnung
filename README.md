@@ -19,6 +19,13 @@ from importlib import reload
 reload(test)
 ~~~
 
+For automated unit-testing:
+
+~~~bash
+cd abrechnung
+python -m unittest discover
+~~~
+
 ## Build and run docker image
 
 ~~~bash
