@@ -19,6 +19,16 @@ class Group:
 
   def add_event(self, event):
     """Add an event to this group and calculate the new balance"""
+
+    for participant in event.participants:
+      found = False
+      for acc in self.accounts:
+        if acc.name.lower() == participant.lower():
+          found = True
+      if not found:
+        raise GroupError("Participant: " + participant + " not found.\n" + "Event will not be added!")
+
+
     self.events.append(event)
 
     # Only use whole payments and randomly put the remainder onto a account
@@ -33,7 +43,7 @@ class Group:
     
     # The payer gets all credits to his account
     for acc in self.accounts:
-      if acc.name == event.payer:
+      if acc.name.lower() == event.payer.lower():
         acc.balance += event.cost_in_cents
 
     # All participants get the cost_per_person to his account
@@ -41,7 +51,7 @@ class Group:
       found = False
       for acc in self.accounts:
         #Use edit-distance here
-        if acc.name == participant:
+        if acc.name.lower() == participant.lower():
           found = True
           acc.balance -= cost_per_person
           break
@@ -54,7 +64,7 @@ class Group:
       rand_person = random.choice(event.participants)
       print("[add_event] - Extra remainder goes to: " +  rand_person)
       for acc in self.accounts:
-        if rand_person == acc.name:
+        if rand_person.lower() == acc.name.lower():
           acc.balance -= remainder
         
   def __repr__(self):
@@ -125,3 +135,7 @@ class Group:
       acc.balance = 0
 
     return ret
+
+class GroupError(Exception):
+  pass
+

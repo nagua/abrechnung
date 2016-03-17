@@ -68,10 +68,14 @@ class AbrechnungsBot:
     payer = args[1]
     participants = args[1:]
 
-    self.groups[group_id].add_event(e.Event(amount, payer, participants))
-    self.export_to_file()
+    try:
+      self.groups[group_id].add_event(e.Event(amount, payer, participants))
+      self.export_to_file()
 
-    bot.sendMessage(chat_id=group_id, text="Event was added")
+      bot.sendMessage(chat_id=group_id, text="Event was added")
+    except g.GroupError as ex:
+      bot.sendMessage(chat_id=group_id, text=str(ex))
+
 
 
   def show_account_data(self, bot, update):
