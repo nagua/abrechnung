@@ -69,6 +69,7 @@ class AbrechnungsBot:
     participants = args[1:]
 
     self.groups[group_id].add_event(e.Event(amount, payer, participants))
+    self.export_to_file()
 
     bot.sendMessage(chat_id=group_id, text="Event was added")
 
@@ -95,16 +96,17 @@ class AbrechnungsBot:
     bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
   def do_balancing(self, bot, update):
-    group_id = update.message.chat_id
-    gr = self.groups[group_id]
+    pass
+    #group_id = update.message.chat_id
+    #gr = self.groups[group_id]
 
-    text = "All account balances were set back to zero\n"
-    transactions = gr.do_balancing()
+    #text = "All account balances were set back to zero\n"
+    #transactions = gr.do_balancing()
 
-    for trans in transactions:
-      text += str(trans) + '\n'
+    #for trans in transactions:
+    #  text += str(trans) + '\n'
 
-    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+    #bot.sendMessage(chat_id=update.message.chat_id, text=text)
 
   def export(self, bot, update):
     group_id = update.message.chat_id
@@ -112,10 +114,14 @@ class AbrechnungsBot:
     if group_id != self.private_chat:
       return
 
+    text = self.export_to_file()
+    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+
+  def export_to_file(self):
     text = yaml.dump(self.groups)
     with open('export.yml', 'w') as f:
       f.write(text)
-    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+    return text
 
   def import_from_file(self, bot, update):
     group_id = update.message.chat_id
