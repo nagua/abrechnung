@@ -14,4 +14,6 @@ COPY requirements.txt /usr/src/app
 COPY abrechnung /usr/src/app/abrechnung
 WORKDIR /usr/src/app/abrechnung
 
+VOLUME /usr/backup
+
 CMD [ "python", "./abrechnungsbot.py" ]

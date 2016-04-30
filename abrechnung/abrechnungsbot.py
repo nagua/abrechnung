@@ -2,7 +2,7 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 import os.path
 import logging, yaml, time
-from telegram import Updater
+from telegram.ext import Updater, CommandHandler
 
 import group as g
 import account as a
@@ -13,24 +13,29 @@ class AbrechnungsBot:
     self.private_chat = int(config["private_chat"])
     self.token        = config["token"]
     self.groups       = groups
+    logging.getLogger().setLevel(logging.INFO)
+    self.logger = logging.getLogger('AbrechnungsBot')
+
 
 
   def connect_and_run(self):
     updater = Updater(token=self.token)
     dispatcher = updater.dispatcher
 
-    dispatcher.addTelegramCommandHandler('start', self.start)
-    dispatcher.addTelegramCommandHandler('add_account', self.add_account)
-    dispatcher.addTelegramCommandHandler('show_account_data', self.show_account_data)
-    dispatcher.addTelegramCommandHandler('calculate_balancing', self.calculate_balancing)
-    dispatcher.addTelegramCommandHandler('do_balancing', self.do_balancing)
-    dispatcher.addTelegramCommandHandler('export', self.export)
-    dispatcher.addTelegramCommandHandler('import_from_file', self.import_from_file)
-    dispatcher.addTelegramCommandHandler('easter', self.easter)
-    dispatcher.addTelegramCommandHandler('add_event', self.add_event)
-    dispatcher.addUnknownTelegramCommandHandler(self.unknown)
+    dispatcher.addHandler(CommandHandler('start', self.start))
+    dispatcher.addHandler(CommandHandler('add_account', self.add_account))
+    dispatcher.addHandler(CommandHandler('show_account_data', self.show_account_data))
+    dispatcher.addHandler(CommandHandler('calculate_balancing', self.calculate_balancing))
+    dispatcher.addHandler(CommandHandler('do_balancing', self.do_balancing))
+    dispatcher.addHandler(CommandHandler('export', self.export))
+    dispatcher.addHandler(CommandHandler('import_from_file', self.import_from_file))
+    dispatcher.addHandler(CommandHandler('easter', self.easter))
+    dispatcher.addHandler(CommandHandler('add_event', self.add_event))
+
+    dispatcher.addErrorHandler(self.unknown)
     
     updater.start_polling()
+    updater.idle()
     
 
   def start(self, bot, update):
@@ -119,21 +124,24 @@ class AbrechnungsBot:
       return
 
     text = self.export_to_file()
-    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+    self.logger.info(text)
+    bot.sendMessage(chat_id=update.message.chat_id, text="Export done")
 
   def export_to_file(self):
+    export_file = '/usr/backup/export.yml'
     text = yaml.dump(self.groups)
-    with open('export.yml', 'w') as f:
+    with open(export_file, 'w') as f:
       f.write(text)
     return text
 
   def import_from_file(self, bot, update):
+    import_file = '/usr/backup/import.yml'
     group_id = update.message.chat_id
 
     if group_id != self.private_chat:
       return
 
-    with open('import.yml') as f:
+    with open(import_file) as f:
       obj = yaml.load(f)
 
     self.groups = obj
@@ -141,7 +149,8 @@ class AbrechnungsBot:
   def easter(self, bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text="This is a easter egg!")
 
-  def unknown(self, bot, update):
+  def unknown(self, bot, update, error):
+    self.logger.info(error)
     bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
 
 def main():
@@ -156,7 +165,7 @@ def main():
     config = yaml.load(data_file)
 
   try:
-    with open("import.yml") as f:
+    with open("/usr/backup/import.yml") as f:
       groups = yaml.load(f)
   except OSError as e:
     groups = {}

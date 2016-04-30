@@ -2,3 +2,8 @@ version: "2"
 services:
   bot:
     build: .
+    volumes:
+      - abrechnung:/usr/backup
+volumes:
+  abrechnung:
+    driver: local
