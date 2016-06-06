@@ -12,6 +12,8 @@ class AbrechnungsBot:
   def __init__(self, config, groups):
     self.private_chat = int(config["private_chat"])
     self.token        = config["token"]
+    self.export_file  = config["export_file"]
+    self.import_file  = config["import_file"]
     self.groups       = groups
     logging.getLogger().setLevel(logging.INFO)
     self.logger = logging.getLogger('AbrechnungsBot')
@@ -22,17 +24,17 @@ class AbrechnungsBot:
     updater = Updater(token=self.token)
     dispatcher = updater.dispatcher
 
-    dispatcher.addHandler(CommandHandler('start', self.start))
-    dispatcher.addHandler(CommandHandler('add_account', self.add_account))
-    dispatcher.addHandler(CommandHandler('show_account_data', self.show_account_data))
-    dispatcher.addHandler(CommandHandler('calculate_balancing', self.calculate_balancing))
-    dispatcher.addHandler(CommandHandler('do_balancing', self.do_balancing))
-    dispatcher.addHandler(CommandHandler('export', self.export))
-    dispatcher.addHandler(CommandHandler('import_from_file', self.import_from_file))
-    dispatcher.addHandler(CommandHandler('easter', self.easter))
-    dispatcher.addHandler(CommandHandler('add_event', self.add_event))
+    dispatcher.add_handler(CommandHandler('start', self.start))
+    dispatcher.add_handler(CommandHandler('add_account', self.add_account, pass_args=True))
+    dispatcher.add_handler(CommandHandler('show_account_data', self.show_account_data))
+    dispatcher.add_handler(CommandHandler('calculate_balancing', self.calculate_balancing))
+    dispatcher.add_handler(CommandHandler('do_balancing', self.do_balancing))
+    dispatcher.add_handler(CommandHandler('export', self.export))
+    dispatcher.add_handler(CommandHandler('import_from_file', self.import_from_file))
+    dispatcher.add_handler(CommandHandler('easter', self.easter))
+    dispatcher.add_handler(CommandHandler('add_event', self.add_event, pass_args=True))
 
-    dispatcher.addErrorHandler(self.unknown)
+    dispatcher.add_error_handler(self.unknown)
     
     updater.start_polling()
     updater.idle()
@@ -65,8 +67,10 @@ class AbrechnungsBot:
   def add_event(self, bot, update, args):
     group_id = update.message.chat_id
     logger = logging.getLogger('add_event')
+    logger.info("Start add event")
 
     if len(args) < 2:
+      bot.sendMessage(chat_id=group_id, text="This command requires at least two arguments")
       return 
 
     amount = args[0]
@@ -128,20 +132,18 @@ class AbrechnungsBot:
     bot.sendMessage(chat_id=update.message.chat_id, text="Export done")
 
   def export_to_file(self):
-    export_file = '/usr/backup/export.yml'
     text = yaml.dump(self.groups)
-    with open(export_file, 'w') as f:
+    with open(self.export_file, 'w') as f:
       f.write(text)
     return text
 
   def import_from_file(self, bot, update):
-    import_file = '/usr/backup/import.yml'
     group_id = update.message.chat_id
 
     if group_id != self.private_chat:
       return
 
-    with open(import_file) as f:
+    with open(self.import_file) as f:
       obj = yaml.load(f)
 
     self.groups = obj
@@ -151,7 +153,8 @@ class AbrechnungsBot:
 
   def unknown(self, bot, update, error):
     self.logger.info(error)
-    bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
+    if bot is None or update is None:
+      bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
 
 def main():
   logging.basicConfig(format='%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
@@ -165,7 +168,7 @@ def main():
     config = yaml.load(data_file)
 
   try:
-    with open("/usr/backup/import.yml") as f:
+    with open(config["import_file"]) as f:
       groups = yaml.load(f)
   except OSError as e:
     groups = {}
