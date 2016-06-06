@@ -90,9 +90,7 @@ class AbrechnungsBot:
   def show_account_data(self, bot, update):
     group_id = update.message.chat_id
     
-    text = ""
-    for acc in self.groups[group_id].accounts:
-      text += str(acc) + '\n'
+    text = str(self.groups[group_id])
 
     bot.sendMessage(chat_id=group_id, text=text)
 

@@ -1,6 +1,7 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 import random, copy, time
 import transaction as trans
+import operator
 
 class Group:
   """
@@ -71,7 +72,8 @@ class Group:
     """Print all account details of this group"""
     ret = ""
     ret += "[print_account_data] - Account details: \n"
-    for acc in self.accounts:
+    sorted_accounts = sorted(self.accounts, key=operator.attrgetter('balance'))
+    for acc in sorted_accounts:
       ret += str(acc) + "\n"
     return ret
 
