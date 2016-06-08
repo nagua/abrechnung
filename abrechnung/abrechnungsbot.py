@@ -151,7 +151,7 @@ class AbrechnungsBot:
 
   def unknown(self, bot, update, error):
     self.logger.info(error)
-    if bot is None or update is None:
+    if bot is not None and update is not None:
       bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
 
 def main():
