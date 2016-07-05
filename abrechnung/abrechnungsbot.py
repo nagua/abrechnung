@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
-import os.path
-import logging, yaml, time
+import logging, yaml, time, os, datetime
 from telegram.ext import Updater, CommandHandler
 
 import group as g
@@ -12,8 +11,7 @@ class AbrechnungsBot:
   def __init__(self, config, groups):
     self.private_chat = int(config["private_chat"])
     self.token        = config["token"]
-    self.export_file  = config["export_file"]
-    self.import_file  = config["import_file"]
+    self.backup_file  = config["backup_file"]
     self.groups       = groups
     logging.getLogger().setLevel(logging.INFO)
     self.logger = logging.getLogger('AbrechnungsBot')
@@ -130,8 +128,9 @@ class AbrechnungsBot:
     bot.sendMessage(chat_id=update.message.chat_id, text="Export done")
 
   def export_to_file(self):
+    os.rename(self.backup_file, self.backup_file +'_' + '{0:%Y-%m-%dT%H:%M:%S}'.format(datetime.datetime.now()))
     text = yaml.dump(self.groups)
-    with open(self.export_file, 'w') as f:
+    with open(self.backup_file, 'w') as f:
       f.write(text)
     return text
 
@@ -141,7 +140,7 @@ class AbrechnungsBot:
     if group_id != self.private_chat:
       return
 
-    with open(self.import_file) as f:
+    with open(self.backup_file) as f:
       obj = yaml.load(f)
 
     self.groups = obj
@@ -166,7 +165,7 @@ def main():
     config = yaml.load(data_file)
 
   try:
-    with open(config["import_file"]) as f:
+    with open(config["backup_file"]) as f:
       groups = yaml.load(f)
   except OSError as e:
     groups = {}

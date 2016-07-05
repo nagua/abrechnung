@@ -1,5 +1,4 @@
 ---
 token: <telegram-api-token>
 private_chat: <private-chat-id>
-export_file: /usr/backup/export.yml
-import_file: /usr/backup/import.yml
+backup_file: /usr/backup/backup.yml
