@@ -11,10 +11,14 @@ class Event:
     self.participants = participants
     self.balancing_operation = False
     self.date = time.localtime()
+    self.remainder = ""
 
   def cost_per_person(self):
     """Calculate cost per person"""
     return self.cost_in_cents / len(self.participants)
+
+  def add_remainder(self, remainder):
+    self.remainder = remainder
 
   def __repr__(self):
   	event_text = "[add_event] - cost: {cost}, payer: {payer}, participants: {participants}"
