@@ -63,6 +63,7 @@ class Group:
     self.events.append(event)
 
   def do_transaction(self, transaction):
+    """Transfer money from one persion to another"""
     found_source, found_destination = False, False
     for acc in self.accounts:
       if acc.name.lower() == transaction.source.lower():
@@ -73,12 +74,14 @@ class Group:
     if not found_source or not found_destination:
       raise GroupError("Participant not found. Can not do the transaction.")
 
+    print(transaction)
+
     # source gets balance decreased, destination gets balance increased
     for acc in self.accounts:
       if acc.name.lower() == transaction.source.lower():
-        acc.balance -= transaction.amount
+        acc.balance -= transaction.amount_in_cents
       if acc.name.lower() == transaction.destination.lower():
-        acc.balance += transaction.amount
+        acc.balance += transaction.amount_in_cents
 
     self.transactions.append(transaction)
         
@@ -127,12 +130,12 @@ class Group:
         if pos.balance != 0:
           if pos.balance >= -neg.balance:
             #There is enough credit on the pos so neg has to transfer all to him
-            transaction_list.append(trans.Transaction(-neg.balance, neg.name, pos.name))
+            transaction_list.append(trans.Transaction(-neg.balance/100, neg.name, pos.name))
             pos.balance += neg.balance
             neg.balance = 0
           else:
             #There is not enough credit on pos so neg has to transfer a part to him
-            transaction_list.append(trans.Transaction(pos.balance, neg.name, pos.name))
+            transaction_list.append(trans.Transaction(pos.balance/100, neg.name, pos.name))
             neg.balance += pos.balance
             pos.balance = 0
 

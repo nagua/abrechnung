@@ -106,6 +106,10 @@ class AbrechnungsBot:
     try:
       self.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
       self.export_to_file()
+
+      bot.sendMessage(chat_id=group_id, text="Transaction was done")
+
+      self.show_account_data(bot, update)
     except g.GroupError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
 

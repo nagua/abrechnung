@@ -3,6 +3,7 @@
 
 import unittest
 import event as e
+import transaction as t
 import account as a
 import group as g
 
@@ -46,9 +47,19 @@ class TestAccounting(unittest.TestCase):
       e.Event(60.50, "nicolas", ["nicolas", "max", "sandrina"]),
     ]
 
+    transactions = [
+      t.Transaction(2.0, "nicolas", "max")
+    ]
+
     # Add events
     for event in events:
       self.group.add_event(event)
+      self.group.print_account_data()
+      self.assertTrue(self.group.check_balance())
+      print()
+
+    for transaction in transactions:
+      self.group.do_transaction(transaction)
       self.group.print_account_data()
       self.assertTrue(self.group.check_balance())
       print()
