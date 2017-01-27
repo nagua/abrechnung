@@ -55,7 +55,7 @@ class NormalizingDict:
   def __setitem__(self, key, value):
     self.data[self.normalize(key)] = value
 
-  def __getitiem__(self, key):
+  def __getitem__(self, key):
     return self.data[self.normalize(key)]
 
   def __contains__(self, key):
