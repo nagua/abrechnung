@@ -23,3 +23,43 @@ def levenshtein(s1, s2):
     previous_row = current_row
  
   return previous_row[-1]
+
+class FuzzyDict:
+  def __init__(self, items=[]):
+    self.data = dict(items)
+    self.threshold = 5
+
+  def __setitem__(self, key, value):
+    self.data[key] = value
+
+  def __getitem__(self, key):
+    dist, match = min((levenshtein(key, match), match) for match in self.data)
+    if dist<self.threshold:
+      return self.data[match]
+    else:
+      raise KeyError(key + " does not match any value")
+
+  def __contains__(self, key):
+    try:
+      v = self[key]
+      return True
+    except KeyError:
+      return False
+
+class NormalizingDict:
+  def __init__(self, items=[]):
+    self.data = {}
+    for k,v in items:
+      self[k] = v
+
+  def __setitem__(self, key, value):
+    self.data[self.normalize(key)] = value
+
+  def __getitiem__(self, key):
+    return self.data[self.normalize(key)]
+
+  def __contains__(self, key):
+    return self.normalize(key) in self.data
+
+  def normalize(self, key):
+    return key.lower()
