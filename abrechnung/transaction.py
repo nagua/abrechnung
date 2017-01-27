@@ -11,5 +11,5 @@ class Transaction:
     self.date = time.localtime()
 
   def __repr__(self):
-    transfer_text = "[transaction] - Transfer: {amount} euro from: {from} to: {to}"
+    transfer_text = "[Transaction] - Transfer: {amount} euro from: {from} to: {to}"
     return transfer_text.format(**{'amount': self.amount_in_cents/100, 'from': self.source, 'to': self.destination})

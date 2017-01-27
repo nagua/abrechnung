@@ -34,10 +34,6 @@ class Group:
     remainder = event.cost_in_cents % len(event.participants)
     cost_per_person = ( event.cost_in_cents - remainder) / len(event.participants)
     
-    add_event_text = "[add_event] - cost_per_person: {cost_per_person}, remainder: {remainder}"
-    print(event)
-    print(add_event_text.format(**{'cost_per_person': cost_per_person, 'remainder': remainder}))
-    
     # The payer gets all credits to his account
     for acc in self.accounts:
       if acc.name.lower() == event.payer.lower():
@@ -54,11 +50,15 @@ class Group:
     # Randomly add remainder costs to a participant
     if remainder != 0:
       rand_person = random.choice(event.participants)
-      event.add_remainder(rand_person)
+      event.add_remainder_person(rand_person)
       print("[add_event] - Extra remainder goes to: " +  rand_person)
       for acc in self.accounts:
         if rand_person.lower() == acc.name.lower():
           acc.balance -= remainder
+
+    add_event_text = "[add_event] - cost_per_person: {cost_per_person}, remainder: {remainder}"
+    print(event)
+    print(add_event_text.format(**{'cost_per_person': cost_per_person, 'remainder': remainder}))
 
     self.events.append(event)
 
