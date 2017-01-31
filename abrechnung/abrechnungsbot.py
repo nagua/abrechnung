@@ -80,6 +80,8 @@ class AbrechnungsBot:
       self.export_to_file()
 
       bot.sendMessage(chat_id=group_id, text="Event was added")
+
+      self.show_account_data(bot, update)
     except g.GroupError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
 
