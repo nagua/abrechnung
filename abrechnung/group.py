@@ -64,25 +64,21 @@ class Group:
 
   def do_transaction(self, transaction):
     """Transfer money from one persion to another"""
-    found_source, found_destination = False, False
+    src, dst = None, None
     for acc in self.accounts:
-      if acc.name.lower() == transaction.source.lower():
-        found_source = True
-      if acc.name.lower() == transaction.destination.lower():
-        found_destination = True
+        if acc.name.lower() == transaction.source.lower():
+            src = acc
+        if acc.name.lower() == transaction.source.lower():
+            dst = acc
 
-    if not found_source or not found_destination:
+    if not src or not dst:
       raise GroupError("Participant not found. Can not do the transaction.")
 
     print(transaction)
 
     # source gets balance decreased, destination gets balance increased
-    for acc in self.accounts:
-      if acc.name.lower() == transaction.source.lower():
-        acc.balance -= transaction.amount_in_cents
-      if acc.name.lower() == transaction.destination.lower():
-        acc.balance += transaction.amount_in_cents
-
+    src.balance -= transaction.amount_in_cents
+    dst.balance += transaction.amount_in_cents
     self.transactions.append(transaction)
         
   def __repr__(self):
