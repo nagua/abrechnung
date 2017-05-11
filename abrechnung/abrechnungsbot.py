@@ -7,6 +7,7 @@ import group as g
 import account as a
 import event as e
 import transaction as t
+import billingdata as b
 
 class AbrechnungsBot:
   def __init__(self, config, billingdata):
@@ -195,8 +196,9 @@ def main():
   try:
     with open(config["backup_file"]) as f:
       billingdata = yaml.load(f)
+      billingdata.update()
   except OSError as e:
-    billingdata = {}
+    billingdata = b.BillingData()
 
   bot = AbrechnungsBot(config, billingdata)
   bot.connect_and_run()
