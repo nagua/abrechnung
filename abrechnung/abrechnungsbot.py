@@ -8,11 +8,11 @@ import account as a
 import event as e
 
 class AbrechnungsBot:
-  def __init__(self, config, groups):
+  def __init__(self, config, billingdata):
     self.private_chat = int(config["private_chat"])
     self.token        = config["token"]
     self.backup_file  = config["backup_file"]
-    self.groups       = groups
+    self.billingdata  = billingdata
     logging.getLogger().setLevel(logging.INFO)
     self.logger = logging.getLogger('AbrechnungsBot')
 
@@ -33,10 +33,10 @@ class AbrechnungsBot:
     dispatcher.add_handler(CommandHandler('add_event', self.add_event, pass_args=True))
 
     dispatcher.add_error_handler(self.unknown)
-    
+
     updater.start_polling()
     updater.idle()
-    
+
 
   def start(self, bot, update):
     group_id = update.message.chat_id
@@ -44,12 +44,12 @@ class AbrechnungsBot:
     found = False
 
     try:
-      self.groups[group_id]
+      self.billingdata.groups[group_id]
       found = True
     except KeyError:
       bot.sendMessage(chat_id=update.message.chat_id, text="Added new group")
 
-    self.groups[group_id] = g.Group(group_id)
+    self.billingdata.groups[group_id] = g.Group(group_id)
 
     if found:
       bot.sendMessage(chat_id=update.message.chat_id, text="Recreated group")
@@ -60,7 +60,7 @@ class AbrechnungsBot:
     if len(args) != 1:
       return
 
-    self.groups[group_id].add_account(a.Account(args[0]))
+    self.billingdata.groups[group_id].add_account(a.Account(args[0]))
 
   def add_event(self, bot, update, args):
     group_id = update.message.chat_id
@@ -69,14 +69,14 @@ class AbrechnungsBot:
 
     if len(args) < 2:
       bot.sendMessage(chat_id=group_id, text="This command requires at least two arguments")
-      return 
+      return
 
     amount = args[0]
     payer = args[1]
     participants = args[1:]
 
     try:
-      self.groups[group_id].add_event(e.Event(amount, payer, participants))
+      self.billingdata.groups[group_id].add_event(e.Event(amount, payer, participants))
       self.export_to_file()
 
       bot.sendMessage(chat_id=group_id, text="Event was added")
@@ -89,14 +89,14 @@ class AbrechnungsBot:
 
   def show_account_data(self, bot, update):
     group_id = update.message.chat_id
-    
-    text = str(self.groups[group_id])
+
+    text = str(self.billingdata.groups[group_id])
 
     bot.sendMessage(chat_id=group_id, text=text)
 
   def calculate_balancing(self, bot, update):
     group_id = update.message.chat_id
-    gr = self.groups[group_id]
+    gr = self.billingdata.groups[group_id]
 
     text = ""
     transactions = gr.calculate_balancing()
@@ -109,7 +109,7 @@ class AbrechnungsBot:
   def do_balancing(self, bot, update):
     pass
     #group_id = update.message.chat_id
-    #gr = self.groups[group_id]
+    #gr = self.billingdata.groups[group_id]
 
     #text = "All account balances were set back to zero\n"
     #transactions = gr.do_balancing()
@@ -131,7 +131,7 @@ class AbrechnungsBot:
 
   def export_to_file(self):
     os.rename(self.backup_file, self.backup_file +'_' + '{0:%Y-%m-%dT%H:%M:%S}'.format(datetime.datetime.now()))
-    text = yaml.dump(self.groups)
+    text = yaml.dump(self.billingdata)
     with open(self.backup_file, 'w') as f:
       f.write(text)
     return text
@@ -145,7 +145,7 @@ class AbrechnungsBot:
     with open(self.backup_file) as f:
       obj = yaml.load(f)
 
-    self.groups = obj
+    self.billingdata = obj
 
   def easter(self, bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text="This is a easter egg!")
@@ -168,13 +168,13 @@ def main():
 
   try:
     with open(config["backup_file"]) as f:
-      groups = yaml.load(f)
+      billingdata = yaml.load(f)
   except OSError as e:
-    groups = {}
+    billingdata = {}
 
-  bot = AbrechnungsBot(config, groups)
+  bot = AbrechnungsBot(config, billingdata)
   bot.connect_and_run()
-  
+
   logger.info("Bot initialisiert")
 
 if __name__ == '__main__':
