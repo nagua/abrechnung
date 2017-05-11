@@ -100,11 +100,8 @@ class AbrechnungsBot:
       bot.sendMessage(chat_id=group_id, text="This command requires three arguments")
       return
 
-    amount = args[0]
-    source = args[1]
-    destination = args[2]
-
     try:
+      amount, source, destination = args
       self.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
       self.export_to_file()
 
