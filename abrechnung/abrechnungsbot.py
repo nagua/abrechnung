@@ -102,7 +102,7 @@ class AbrechnungsBot:
 
     try:
       amount, source, destination = args
-      self.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
+      self.billingdata.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
       self.export_to_file()
 
       bot.sendMessage(chat_id=group_id, text="Transaction was done")
