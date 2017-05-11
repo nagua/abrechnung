@@ -33,7 +33,7 @@ class Group:
     # Only use whole payments and randomly put the remainder onto a account
     remainder = event.cost_in_cents % len(event.participants)
     cost_per_person = ( event.cost_in_cents - remainder) / len(event.participants)
-    
+
     # The payer gets all credits to his account
     for acc in self.accounts:
       if acc.name.lower() == event.payer.lower():
@@ -66,10 +66,10 @@ class Group:
     """Transfer money from one persion to another"""
     src, dst = None, None
     for acc in self.accounts:
-        if acc.name.lower() == transaction.source.lower():
-            src = acc
-        if acc.name.lower() == transaction.source.lower():
-            dst = acc
+      if acc.name.lower() == transaction.source.lower():
+        src = acc
+      if acc.name.lower() == transaction.destination.lower():
+        dst = acc
 
     if not src or not dst:
       raise GroupError("Participant not found. Can not do the transaction.")
@@ -80,7 +80,7 @@ class Group:
     src.balance -= transaction.amount_in_cents
     dst.balance += transaction.amount_in_cents
     self.transactions.append(transaction)
-        
+
   def __repr__(self):
     """Print all account details of this group"""
     ret = ""
@@ -114,9 +114,9 @@ class Group:
       else:
         positive_accounts.append(copy.copy(acc))
 
-    
+
     transaction_list = []
-    
+
     # For every negative account find a positive one to that the tansaction has to go to.
     for neg in negative_accounts:
       for pos in positive_accounts:
