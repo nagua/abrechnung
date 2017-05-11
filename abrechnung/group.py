@@ -12,6 +12,7 @@ class Group:
   def __init__(self, group_id):
     self.accounts = []
     self.events = []
+    self.transactions = []
     self.group_id = group_id
 
   def add_account(self, account):
@@ -29,18 +30,9 @@ class Group:
       if not found:
         raise GroupError("Participant: " + participant + " not found.\n" + "Event will not be added!")
 
-
-    self.events.append(event)
-
     # Only use whole payments and randomly put the remainder onto a account
     remainder = event.cost_in_cents % len(event.participants)
     cost_per_person = ( event.cost_in_cents - remainder) / len(event.participants)
-    
-    
-    add_event_text = "[add_event] - cost_per_person: {cost_per_person}, remainder: {remainder}"
-    print(event)
-    print(add_event_text.format(**{'cost_per_person': cost_per_person, 'remainder': remainder}))
-
     
     # The payer gets all credits to his account
     for acc in self.accounts:
@@ -49,24 +41,45 @@ class Group:
 
     # All participants get the cost_per_person to his account
     for participant in event.participants:
-      found = False
       for acc in self.accounts:
         #Use edit-distance here
         if acc.name.lower() == participant.lower():
-          found = True
           acc.balance -= cost_per_person
           break
-      if not found:
-        # We should throw an exception here
-        print("[add_event] - Person not found: " + participant)
 
     # Randomly add remainder costs to a participant
     if remainder != 0:
       rand_person = random.choice(event.participants)
+      event.add_remainder_person(rand_person)
       print("[add_event] - Extra remainder goes to: " +  rand_person)
       for acc in self.accounts:
         if rand_person.lower() == acc.name.lower():
           acc.balance -= remainder
+
+    add_event_text = "[add_event] - cost_per_person: {cost_per_person}, remainder: {remainder}"
+    print(event)
+    print(add_event_text.format(**{'cost_per_person': cost_per_person, 'remainder': remainder}))
+
+    self.events.append(event)
+
+  def do_transaction(self, transaction):
+    """Transfer money from one persion to another"""
+    src, dst = None, None
+    for acc in self.accounts:
+        if acc.name.lower() == transaction.source.lower():
+            src = acc
+        if acc.name.lower() == transaction.source.lower():
+            dst = acc
+
+    if not src or not dst:
+      raise GroupError("Participant not found. Can not do the transaction.")
+
+    print(transaction)
+
+    # source gets balance decreased, destination gets balance increased
+    src.balance -= transaction.amount_in_cents
+    dst.balance += transaction.amount_in_cents
+    self.transactions.append(transaction)
         
   def __repr__(self):
     """Print all account details of this group"""
@@ -113,12 +126,12 @@ class Group:
         if pos.balance != 0:
           if pos.balance >= -neg.balance:
             #There is enough credit on the pos so neg has to transfer all to him
-            transaction_list.append(trans.Transaction(-neg.balance, neg.name, pos.name))
+            transaction_list.append(trans.Transaction(-neg.balance/100, neg.name, pos.name))
             pos.balance += neg.balance
             neg.balance = 0
           else:
             #There is not enough credit on pos so neg has to transfer a part to him
-            transaction_list.append(trans.Transaction(pos.balance, neg.name, pos.name))
+            transaction_list.append(trans.Transaction(pos.balance/100, neg.name, pos.name))
             neg.balance += pos.balance
             pos.balance = 0
 

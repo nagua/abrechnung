@@ -6,6 +6,8 @@ from telegram.ext import Updater, CommandHandler
 import group as g
 import account as a
 import event as e
+import transaction as t
+import billingdata as b
 
 class AbrechnungsBot:
   def __init__(self, config, billingdata):
@@ -31,6 +33,7 @@ class AbrechnungsBot:
     dispatcher.add_handler(CommandHandler('import_from_file', self.import_from_file))
     dispatcher.add_handler(CommandHandler('easter', self.easter))
     dispatcher.add_handler(CommandHandler('add_event', self.add_event, pass_args=True))
+    dispatcher.add_handler(CommandHandler('do_transaction', self.do_transaction, pass_args=True))
 
     dispatcher.add_error_handler(self.unknown)
 
@@ -85,7 +88,28 @@ class AbrechnungsBot:
     except g.GroupError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
 
+  def do_transaction(self, bot, update, args):
+    """
+    \do_transaction {amount} {source} {destination}
+    """
+    group_id = update.message.chat_id
+    logger = logging.getLogger('do_transaction')
+    logger.info("Start do transaction")
 
+    if len(args) != 3:
+      bot.sendMessage(chat_id=group_id, text="This command requires three arguments")
+      return
+
+    try:
+      amount, source, destination = args
+      self.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
+      self.export_to_file()
+
+      bot.sendMessage(chat_id=group_id, text="Transaction was done")
+
+      self.show_account_data(bot, update)
+    except g.GroupError as ex:
+      bot.sendMessage(chat_id=group_id, text=str(ex))
 
   def show_account_data(self, bot, update):
     group_id = update.message.chat_id
@@ -169,8 +193,9 @@ def main():
   try:
     with open(config["backup_file"]) as f:
       billingdata = yaml.load(f)
+      billingdata.update()
   except OSError as e:
-    billingdata = {}
+    billingdata = b.BillingData()
 
   bot = AbrechnungsBot(config, billingdata)
   bot.connect_and_run()
