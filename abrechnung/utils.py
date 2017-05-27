@@ -46,6 +46,9 @@ class FuzzyDict:
     except KeyError:
       return False
 
+  def __iter__(self):
+    yield from self.data.values()
+
 class NormalizingDict:
   def __init__(self, items=[]):
     self.data = {}
@@ -63,3 +66,6 @@ class NormalizingDict:
 
   def normalize(self, key):
     return key.lower()
+
+  def __iter__(self):
+    yield from self.data.values()
