@@ -25,9 +25,9 @@ def levenshtein(s1, s2):
   return previous_row[-1]
 
 class FuzzyDict:
-  def __init__(self, items=[]):
+  def __init__(self, items=[], threshold=5):
     self.data = dict(items)
-    self.threshold = 5
+    self.threshold = threshold
 
   def __setitem__(self, key, value):
     self.data[key] = value
@@ -49,6 +49,12 @@ class FuzzyDict:
   def __iter__(self):
     yield from self.data.values()
 
+  def __repr__(self):
+    return "FuzzyDict({data!r}, threshold={threshold})".format(**self.__dict__)
+
+  def __str__(self):
+    return str(self.data)
+
 class NormalizingDict:
   def __init__(self, items=[]):
     self.data = {}
@@ -69,3 +75,9 @@ class NormalizingDict:
 
   def __iter__(self):
     yield from self.data.values()
+
+  def __repr__(self):
+    return "NormalizingDict({data!r})".format(**self.__dict__)
+
+  def __str__(self):
+    return str(self.data)
