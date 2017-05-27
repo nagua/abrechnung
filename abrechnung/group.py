@@ -2,6 +2,7 @@
 import random, copy, time
 import transaction as trans
 import operator
+from utils import NormalizingDict
 
 class Group:
   """
@@ -23,7 +24,7 @@ class Group:
     """Add an event to this group and calculate the new balance"""
 
     for participant in event.participants:
-      if participant.name not in self.accounts:
+      if participant not in self.accounts:
         raise GroupError("Participant: " + participant + " not found.\n" + "Event will not be added!")
 
     # Only use whole payments and randomly put the remainder onto a account
