@@ -1,0 +1,20 @@
+!!python/object:billingdata.BillingData
+groups:  
+  101148034: !!python/object:group.Group
+    accounts:
+    - !!python/object:account.Account {balance: 666.0, name: n}
+    - !!python/object:account.Account {balance: -333.0, name: m}
+    - !!python/object:account.Account {balance: -333.0, name: s}
+    events:
+    - !!python/object:event.Event
+      balancing_operation: false
+      cost_in_cents: 1000
+      date: !!python/object/apply:time.struct_time
+      - !!python/tuple [2017, 5, 11, 12, 30, 1, 3, 131, 0]
+      - {tm_gmtoff: 0, tm_zone: UTC}
+      participants: [n, s, m]
+      payer: n
+      remainder_person: n
+    group_id: 101148034
+    transactions: []
+version: 1
