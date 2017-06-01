@@ -1,7 +1,7 @@
 class BillingData:
   def __init__(self):
     self.version = 1
-    self.groups = []
+    self.groups = {}
 
   def update(self):
     if self.version == 0:
