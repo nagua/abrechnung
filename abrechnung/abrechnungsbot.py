@@ -72,6 +72,7 @@ class AbrechnungsBot:
 
     if len(args) < 2:
       bot.sendMessage(chat_id=group_id, text="This command requires at least two arguments")
+      bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
       return
 
     amount = args[0]
@@ -98,6 +99,7 @@ class AbrechnungsBot:
 
     if len(args) != 3:
       bot.sendMessage(chat_id=group_id, text="This command requires three arguments")
+      bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
       return
 
     try:
@@ -172,7 +174,7 @@ class AbrechnungsBot:
     self.billingdata = obj
 
   def easter(self, bot, update):
-    bot.sendMessage(chat_id=update.message.chat_id, text="This is a easter egg!")
+    bot.sendMessage(chat_id=update.message.chat_id, text="This is an easter egg!")
 
   def unknown(self, bot, update, error):
     self.logger.info(error)
