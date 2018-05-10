@@ -2,6 +2,7 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 import logging, yaml, time, os, datetime
 from telegram.ext import Updater, CommandHandler
+from telegram import ParseMode
 
 import group as g
 import account as a
@@ -118,7 +119,7 @@ class AbrechnungsBot:
 
     text = self.billingdata.groups[group_id].readable_account_data()
 
-    bot.sendMessage(chat_id=group_id, text=text)
+    bot.sendMessage(chat_id=group_id, text=text, parse_mode=ParseMode.MARKDOWN)
 
   def calculate_balancing(self, bot, update):
     group_id = update.message.chat_id
