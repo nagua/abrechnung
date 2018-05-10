@@ -116,7 +116,7 @@ class AbrechnungsBot:
   def show_account_data(self, bot, update):
     group_id = update.message.chat_id
 
-    text = str(self.billingdata.groups[group_id])
+    text = self.billingdata.groups[group_id].readable_account_data()
 
     bot.sendMessage(chat_id=group_id, text=text)
 

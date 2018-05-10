@@ -90,8 +90,20 @@ class Group:
       ret += str(acc) + "\n"
     return ret
 
+  def readable_account_data(self):
+    """Print all account details of this group"""
+    ret  = "Aktueller Kontostand:\n"
+    ret += "```\n"
+    sorted_accounts = sorted(self.accounts, key=operator.attrgetter('balance'))
+    longest_key = len(max(self.accounts, key=lambda x: len(x.name)).name)
+    row_format = "{name:<" + str(longest_key) + "}" + " | {balance:=8.2f}"
+    for acc in sorted_accounts:
+      ret += row_format.format(**{'name': acc.name, 'balance': acc.balance / 100}) + "\n"
+    ret += "```"
+    return ret
+
   def print_account_data(self):
-  	print(str(self))
+    print(str(self))
 
   def check_balance(self):
     """Check if all accounts adds up to zero"""

@@ -55,12 +55,16 @@ class TestAccounting(unittest.TestCase):
     for event in events:
       self.group.add_event(event)
       self.group.print_account_data()
+      print()
+      print(self.group.readable_account_data())
       self.assertTrue(self.group.check_balance())
       print()
 
     for transaction in transactions:
       self.group.do_transaction(transaction)
       self.group.print_account_data()
+      print()
+      print(self.group.readable_account_data())
       self.assertTrue(self.group.check_balance())
       print()
 
