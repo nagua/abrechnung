@@ -96,8 +96,8 @@ class AbrechnungsBot:
       cost_per_person = ( event.cost_in_cents - remainder) / len(event.participants)
 
       bot.sendMessage(chat_id=group_id,
-        text="{} payed {}€ for {}. The cost per person was {}€. The remainder is {} and {} had to pay it." \
-        .format(payer, amount, participants, cost_per_person, remainder, event.remainder_person))
+        text="{} payed {}€ for {}. The cost per person was {}€. The remainder is {}€ and {} had to pay it." \
+        .format(payer, amount, ", ".join(participants), cost_per_person/100, remainder / 100, event.remainder_person))
 
       self.show_account_data(bot, update)
     except g.GroupError as ex:

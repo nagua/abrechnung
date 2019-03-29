@@ -95,7 +95,7 @@ class Group:
 
   def readable_account_data(self):
     """Print all account details of this group"""
-    ret  = "Aktueller Kontostand:\n"
+    ret  = "Current Account balance:\n"
     ret += "```\n"
     sorted_accounts = sorted(self.accounts, key=operator.attrgetter('balance'))
     longest_key = len(max(self.accounts, key=lambda x: len(x.name)).name)
