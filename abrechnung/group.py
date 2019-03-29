@@ -81,6 +81,9 @@ class Group:
     dst.balance += transaction.amount_in_cents
     self.transactions.append(transaction)
 
+  def get_last_event(self):
+    return self.events[-1]
+
   def __repr__(self):
     """Print all account details of this group"""
     ret = ""

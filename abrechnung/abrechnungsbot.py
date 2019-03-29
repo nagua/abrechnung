@@ -59,14 +59,21 @@ class AbrechnungsBot:
       bot.sendMessage(chat_id=update.message.chat_id, text="Recreated group")
 
   def add_account(self, bot, update, args):
+    """
+    add_account {name}
+    """
     group_id = update.message.chat_id
 
     if len(args) != 1:
+      bot.sendMessage(chat_id=update.message.chat_id, text="Wrong number of arguments")
       return
 
     self.billingdata.groups[group_id].add_account(a.Account(args[0]))
 
   def add_event(self, bot, update, args):
+    """
+    add_event {amount} {payer} {participants}
+    """
     group_id = update.message.chat_id
     logger = logging.getLogger('add_event')
     logger.info("Start add event")
@@ -84,15 +91,24 @@ class AbrechnungsBot:
       self.billingdata.groups[group_id].add_event(e.Event(amount, payer, participants))
       self.export_to_file()
 
-      bot.sendMessage(chat_id=group_id, text="Event was added")
+      event = self.billingdata.groups[group_id].get_last_event()
+      remainder = event.cost_in_cents % len(event.participants)
+      cost_per_person = ( event.cost_in_cents - remainder) / len(event.participants)
+
+      bot.sendMessage(chat_id=group_id,
+        text="{} payed {}€ for {}. The cost per person was {}€. The remainder is {} and {} had to pay it." \
+        .format(payer, amount, participants, cost_per_person, remainder, event.remainder_person))
 
       self.show_account_data(bot, update)
     except g.GroupError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
+    except ValueError:
+      bot.sendMessage(chat_id=group_id, text="Could not convert {} to an amount".format(amount))
+
 
   def do_transaction(self, bot, update, args):
     """
-    \do_transaction {amount} {source} {destination}
+    do_transaction {amount} {source} {destination}
     """
     group_id = update.message.chat_id
     logger = logging.getLogger('do_transaction')
@@ -108,11 +124,13 @@ class AbrechnungsBot:
       self.billingdata.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
       self.export_to_file()
 
-      bot.sendMessage(chat_id=group_id, text="Transaction was done")
-
+      bot.sendMessage(chat_id=group_id, text="Transfered {}€ from {} to {}".format(amount, source, destination))
       self.show_account_data(bot, update)
+
     except g.GroupError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
+    except ValueError:
+      bot.sendMessage(chat_id=group_id, text="Could not convert {} to an amount".format(args[0]))
 
   def show_account_data(self, bot, update):
     group_id = update.message.chat_id
@@ -180,7 +198,7 @@ class AbrechnungsBot:
   def unknown(self, bot, update, error):
     self.logger.info(error)
     if bot is not None and update is not None:
-      bot.sendMessage(chat_id=update.message.chat_id, text="Tut mir leid, ich habe dein Kommando nicht verstanden!")
+      bot.sendMessage(chat_id=update.message.chat_id, text="I'm sorry, I did not understand your command.")
 
 def main():
   logging.basicConfig(format='%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
