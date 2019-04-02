@@ -97,11 +97,11 @@ class AbrechnungsBot:
 
       if event.remainder_person == "":
         bot.sendMessage(chat_id=group_id,
-          text="{} payed {}€ for {}. The cost per person was {}€." \
+          text="{} paid {}€ for {}. The cost per person was {}€." \
           .format(payer, amount, ", ".join(participants), cost_per_person/100))
       else:
         bot.sendMessage(chat_id=group_id,
-          text="{} payed {}€ for {}. The cost per person was {}€. The remainder is {}€ and {} had to pay it." \
+          text="{} paid {}€ for {}. The cost per person was {}€. The remainder is {}€ and {} had to pay it." \
           .format(payer, amount, ", ".join(participants), cost_per_person/100, remainder / 100, event.remainder_person))
 
       self.show_account_data(bot, update)
@@ -131,7 +131,7 @@ class AbrechnungsBot:
       self.billingdata.groups[group_id].do_transaction(t.Transaction(amount, source, destination))
       self.export_to_file()
 
-      bot.sendMessage(chat_id=group_id, text="Transfered {}€ from {} to {}".format(amount, source, destination))
+      bot.sendMessage(chat_id=group_id, text="Transferred {}€ from {} to {}".format(amount, source, destination))
       self.show_account_data(bot, update)
 
     except g.GroupError as ex:
