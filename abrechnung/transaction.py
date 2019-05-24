@@ -5,7 +5,8 @@ import time
 class Transaction:
 
   def __init__(self, amount_in_euro, source, destination):
-    self.amount_in_cents = int(float(amount_in_euro) * 100)
+    str_amount_in_cents = amount_in_euro.replace('.', '').replace(',', '')
+    self.amount_in_cents = int(str_amount_in_cents)
     self.source = source
     self.destination = destination
     self.date = time.localtime()

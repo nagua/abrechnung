@@ -6,7 +6,8 @@ class Event:
   """Class that represents an event"""
 
   def __init__(self, cost_in_euro, payer, participants):
-    self.cost_in_cents = int(float(cost_in_euro) * 100)
+    str_cost_in_cents = cost_in_euro.replace('.', '').replace(',', '')
+    self.cost_in_cents = int(str_cost_in_cents)
     self.payer = payer
     self.participants = participants
     self.balancing_operation = False
