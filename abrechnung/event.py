@@ -1,13 +1,13 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
 import time
+import utils
 
 class Event:
   """Class that represents an event"""
 
   def __init__(self, cost_in_euro, payer, participants):
-    str_cost_in_cents = cost_in_euro.replace('.', '').replace(',', '')
-    self.cost_in_cents = int(str_cost_in_cents)
+    self.cost_in_cents = utils.parse_amount(cost_in_euro)
     self.payer = payer
     self.participants = participants
     self.balancing_operation = False

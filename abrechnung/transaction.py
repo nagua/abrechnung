@@ -1,12 +1,12 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
 import time
+import utils
 
 class Transaction:
 
   def __init__(self, amount_in_euro, source, destination):
-    str_amount_in_cents = amount_in_euro.replace('.', '').replace(',', '')
-    self.amount_in_cents = int(str_amount_in_cents)
+    self.amount_in_cents = utils.parse_amount(amount_in_euro)
     self.source = source
     self.destination = destination
     self.date = time.localtime()

@@ -40,15 +40,15 @@ class TestAccounting(unittest.TestCase):
     --------------------------------------------------------------------------
     """
     events = [
-      e.Event(30, "max", ["nicolas", "max", "sandrina"]),
-      e.Event(20, "max", ["nicolas", "max", "sandrina"]),
-      e.Event(50, "max", ["nicolas", "max", "sandrina", "annika"]),
-      e.Event(30, "nicolas", ["nicolas", "max", "annika"]),
-      e.Event(60.50, "nicolas", ["nicolas", "max", "sandrina"]),
+      e.Event("30", "max", ["nicolas", "max", "sandrina"]),
+      e.Event("20", "max", ["nicolas", "max", "sandrina"]),
+      e.Event("50", "max", ["nicolas", "max", "sandrina", "annika"]),
+      e.Event("30", "nicolas", ["nicolas", "max", "annika"]),
+      e.Event("60.50", "nicolas", ["nicolas", "max", "sandrina"]),
     ]
 
     transactions = [
-      t.Transaction(2.0, "nicolas", "max")
+      t.Transaction("2.0", "nicolas", "max")
     ]
 
     # Add events

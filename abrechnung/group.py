@@ -141,12 +141,12 @@ class Group:
         if pos.balance != 0:
           if pos.balance >= -neg.balance:
             #There is enough credit on the pos so neg has to transfer all to him
-            transaction_list.append(trans.Transaction(-neg.balance/100, neg.name, pos.name))
+            transaction_list.append(trans.Transaction(str(-neg.balance), neg.name, pos.name))
             pos.balance += neg.balance
             neg.balance = 0
           else:
             #There is not enough credit on pos so neg has to transfer a part to him
-            transaction_list.append(trans.Transaction(pos.balance/100, neg.name, pos.name))
+            transaction_list.append(trans.Transaction(str(pos.balance), neg.name, pos.name))
             neg.balance += pos.balance
             pos.balance = 0
 

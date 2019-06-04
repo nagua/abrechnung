@@ -28,7 +28,7 @@ class TestAbrechnungsBot(unittest.TestCase):
         self.assertEqual("Ich", self._group().accounts[0].name)
         
     def test_add_evt(self):
-        self.bot.add_event(self.bot_mock, self.update_mock, [100, "Du", "Ich"])
+        self.bot.add_event(self.bot_mock, self.update_mock, ["100", "Du", "Ich"])
 
         self.assertTrue(self.bot_mock.sendMessage.called)
         self.assertTrue(self.bot_mock.sendMessage.called_with(

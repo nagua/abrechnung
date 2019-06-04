@@ -9,6 +9,7 @@ import account as a
 import event as e
 import transaction as t
 import billingdata as b
+import utils as u
 
 class AbrechnungsBot:
   def __init__(self, config, billingdata):
@@ -108,6 +109,9 @@ class AbrechnungsBot:
     except g.GroupError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
       bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
+    except u.ConversionError as ex:
+      bot.sendMessage(chat_id=group_id, text=str(ex))
+      bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
     except ValueError:
       bot.sendMessage(chat_id=group_id, text="Could not convert {} to an amount".format(amount))
       bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
@@ -135,6 +139,9 @@ class AbrechnungsBot:
       self.show_account_data(bot, update)
 
     except g.GroupError as ex:
+      bot.sendMessage(chat_id=group_id, text=str(ex))
+      bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
+    except u.ConversionError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
       bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
     except ValueError:
