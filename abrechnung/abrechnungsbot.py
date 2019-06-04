@@ -112,9 +112,6 @@ class AbrechnungsBot:
     except u.ConversionError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
       bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
-    except ValueError:
-      bot.sendMessage(chat_id=group_id, text="Could not convert {} to an amount".format(amount))
-      bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
 
 
   def do_transaction(self, bot, update, args):
@@ -143,9 +140,6 @@ class AbrechnungsBot:
       bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
     except u.ConversionError as ex:
       bot.sendMessage(chat_id=group_id, text=str(ex))
-      bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
-    except ValueError:
-      bot.sendMessage(chat_id=group_id, text="Could not convert {} to an amount".format(args[0]))
       bot.sendSticker(chat_id=group_id, sticker='CAADAwADnQEAAr-MkATNKNQOPN0QfQI')
 
   def show_account_data(self, bot, update):

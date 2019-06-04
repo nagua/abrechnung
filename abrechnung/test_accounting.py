@@ -7,13 +7,6 @@ import transaction as t
 import account as a
 import group as g
 
-def gen_test_group():
-  """ some function for backwards compatibility (used in ipynb file)"""
-  t = TestAccounting()
-  t.setUp()
-  t.test_group_balancing()
-  return t.group
-
 class TestAccounting(unittest.TestCase):
   def tearDown(self):
     """

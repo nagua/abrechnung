@@ -25,22 +25,35 @@ def levenshtein(s1, s2):
   return previous_row[-1]
 
 def parse_amount(s):
-  parse = try_parse_with_delim(s, '.')
-  if parse:
-    return parse
-  parse = try_parse_with_delim(s, '.')
-  if parse:
-    return parse
-  return int(s)
+  try:
+    return try_parse_with_delim(s, '.')
+  except ValueError:
+    pass
+
+  try:
+    return try_parse_with_delim(s, ',')
+  except ValueError:
+    pass
+
+  try:
+    return int(s) * 100
+  except ValueError:
+    pass
+
+  raise ConversionError("Could not convert {} to an amount.".format(s))
+
 
 def try_parse_with_delim(s, d):
   if d in s:
     ps = s.split(d)
-    if len(ps) == 2 and len(ps[1]) <= 2:
-      return int(ps[0]) * 100 + int(ps[1])
-    else:
-      raise ConversionError("Could not convert {} to an amount.".format(s))
-  return None
+    if len(ps) == 2:
+      if len(ps[1]) == 2:
+        return int(ps[0]) * 100 + int(ps[1]) * 1
+      elif len(ps[1]) == 1:
+        return int(ps[0]) * 100 + int(ps[1]) * 10
+      elif len(ps[1]) == 0:
+        return int(ps[0]) * 100
+  raise ValueError
 
 class ConversionError(Exception):
   pass
