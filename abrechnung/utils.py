@@ -26,6 +26,7 @@ def levenshtein(s1, s2):
 
 
 def amount_to_string(amount):
+  amount = int(amount)
   negative = amount < 0
   if negative:
     amount *= -1
