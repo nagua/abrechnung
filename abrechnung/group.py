@@ -1,6 +1,7 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 import random, copy, time
 import transaction as trans
+import utils as u
 import operator
 
 class Group:
@@ -141,12 +142,12 @@ class Group:
         if pos.balance != 0:
           if pos.balance >= -neg.balance:
             #There is enough credit on the pos so neg has to transfer all to him
-            transaction_list.append(trans.Transaction(str(-neg.balance), neg.name, pos.name))
+            transaction_list.append(trans.Transaction(u.amount_to_string(-neg.balance), neg.name, pos.name))
             pos.balance += neg.balance
             neg.balance = 0
           else:
             #There is not enough credit on pos so neg has to transfer a part to him
-            transaction_list.append(trans.Transaction(str(pos.balance), neg.name, pos.name))
+            transaction_list.append(trans.Transaction(u.amount_to_string(pos.balance), neg.name, pos.name))
             neg.balance += pos.balance
             pos.balance = 0
 

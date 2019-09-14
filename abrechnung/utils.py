@@ -24,6 +24,22 @@ def levenshtein(s1, s2):
  
   return previous_row[-1]
 
+
+def amount_to_string(amount):
+  negative = amount < 0
+  if negative:
+    amount *= -1
+
+  fractional_part = amount % 100
+  integer_part = (amount - fractional_part) // 100
+
+  ret = "{}.{:02d}".format(integer_part, fractional_part)
+  if negative:
+    ret = "-" + ret
+
+  return ret
+
+
 def parse_amount(s):
   try:
     return try_parse_with_delim(s, '.')
