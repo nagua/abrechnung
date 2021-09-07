@@ -198,7 +198,7 @@ class AbrechnungsBot:
       return
 
     with open(self.backup_file) as f:
-      obj = yaml.load(f)
+      obj = yaml.load(f, Loader=yaml.Loader)
 
     self.billingdata = obj
 
@@ -219,11 +219,11 @@ def main():
 
   # Load configuration
   with open("config.yml") as data_file:
-    config = yaml.load(data_file)
+    config = yaml.load(data_file, Loader=yaml.FullLoader)
 
   try:
     with open(config["backup_file"]) as f:
-      billingdata = yaml.load(f)
+      billingdata = yaml.load(f, Loader=yaml.Loader)
       billingdata.update()
   except OSError as e:
     billingdata = b.BillingData()
