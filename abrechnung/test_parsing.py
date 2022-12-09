@@ -10,13 +10,24 @@ class TestAmountParsing(unittest.TestCase):
     self.assertEqual(u.parse_amount("3.60"), 360)
     self.assertEqual(u.parse_amount("3."), 300)
 
+  def test_negative_dot(self):
+    self.assertEqual(u.parse_amount("-3.6"), -360)
+    self.assertEqual(u.parse_amount("-3.60"), -360)
+    self.assertEqual(u.parse_amount("-3."), -300)
+
   def test_simple_comma(self):
     self.assertEqual(u.parse_amount("3,6"), 360)
     self.assertEqual(u.parse_amount("3,60"), 360)
     self.assertEqual(u.parse_amount("3,"), 300)
 
+  def test_negative_comma(self):
+    self.assertEqual(u.parse_amount("-3,6"), -360)
+    self.assertEqual(u.parse_amount("-3,60"), -360)
+    self.assertEqual(u.parse_amount("-3,"), -300)
+
   def test_without_delim(self):
     self.assertEqual(u.parse_amount("3"), 300)
+    self.assertEqual(u.parse_amount("-3"), -300)
 
   def test_error(self):
     with self.assertRaises(u.ConversionError):
