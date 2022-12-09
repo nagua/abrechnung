@@ -64,10 +64,12 @@ def try_parse_with_delim(s, d):
   if d in s:
     ps = s.split(d)
     if len(ps) == 2:
+      # sign has to be applied to the amount following the delimiter
+      sign = 1 if (int(ps[0]) >= 0) else -1
       if len(ps[1]) == 2:
-        return int(ps[0]) * 100 + int(ps[1]) * 1
+        return int(ps[0]) * 100 + int(ps[1]) * 1 * sign
       elif len(ps[1]) == 1:
-        return int(ps[0]) * 100 + int(ps[1]) * 10
+        return int(ps[0]) * 100 + int(ps[1]) * 10 * sign
       elif len(ps[1]) == 0:
         return int(ps[0]) * 100
   raise ValueError
